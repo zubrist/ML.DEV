@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - MLAlgoLab</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+
+    body {
+      display: flex;
+      height: 100vh;
+      flex-direction: column;
+      background-color: #222831;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      background-color: #31363f;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      margin: auto;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #ffffff;
+      text-align: center;
+      margin-top: -20px;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+      width: 100%;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      background-color: #31363f;
+      border: 1px solid #3ae3ae;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+      color: #ffffff;
+    }
+
+    .form-group input:focus {
+      border-color: white;
+      outline: none;
+    }
+
+    #togglePassword {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #3ae3ae;
+      padding: 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #3ae3ae;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #4a994a;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .signup-link a {
+      color: #5cb85c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    #error-msg {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div style="width: 100%; background-color: #33333306; color: white; padding: 10px; text-align: right;">
+    <a href="index.html" style="color: #5cb85c; text-decoration: none; margin: 0 15px;">Home</a>
+    <a href="about.html" style="color: #5cb85c; text-decoration: none; margin: 0 15px;">About</a>
+  </div>
+  <div class="container">
+    <h2>Sign In</h2>
+    <form id="signin-form">
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Email" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Email is your password">
+        <button type="button" id="togglePassword">
+          <i class="fas fa-eye" id="eyeIcon"></i>
+        </button>
+      </div>
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+    <p class="signup-link" style="color: #ffffff;">
+      Don't have an account ? <span style="color: #5cb85c;">   </span>
+      <a href="signup.html">Sign Up</a>
+    </p>
+    <p id="error-msg">Invalid username or password</p>
+  </div>
+
+  <script>
+    const form = document.getElementById('signin-form');
+    const errorMsg = document.getElementById('error-msg');
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/signin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          window.location.href = 'algorithm.html';
+        } else {
+          errorMsg.style.display = 'block';
+          errorMsg.textContent = data.detail || 'Invalid credentials';
+        }
+      } catch (error) {
+        console.error('Signin error:', error);
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = 'An error occurred during sign in';
+      }
+    });
+  </script>
+
+  <style>
+    #togglePassword:hover {
+      color: #5cb85c;
+    }
+    
+    #togglePassword:focus {
+      outline: none;
+    }
+    
+    .fa-eye, .fa-eye-slash {
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+  </style>
+</body>
+</html>

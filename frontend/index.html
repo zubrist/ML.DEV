@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLAlgoLab</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script> 
+   
+   <style>
+    .avatars {
+        display: flex;
+        justify-content: center;
+        margin-top: 5px;
+        position: relative;
+        height: 15px;  /* Increased height to accommodate avatars */
+    }
+
+    .avatars img {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        position: absolute;
+        background-color: #31363F;
+        transition: transform 0.2s ease;
+        border: 1px solid #00ddb3;
+    }
+
+    .avatars img:nth-child(1) {
+        left: 50%;
+        margin-left: -40px;  /* Adjusted spacing */
+        z-index: 4;
+    }
+
+    .avatars img:nth-child(2) {
+        left: 50%;
+        margin-left: -20px;  /* Adjusted spacing */
+        z-index: 3;
+    }
+
+    .avatars img:nth-child(3) {
+        left: 50%;
+        margin-left: 0px;
+        z-index: 2;
+    }
+    
+    .avatars img:nth-child(4) {
+        left: 50%;
+        margin-left: 15px;  /* Adjusted spacing */
+        z-index: 1;
+    }
+
+    .avatars img:hover {
+        transform: translateY(-2px);
+        z-index: 5;
+    }
+
+    .stat-card img {
+        width: 40px;
+        height: 40px;
+        margin-top: 10px;
+    }
+    .stat-card lottie-player {
+        margin-left: 50px;
+        width: 100px;
+        height: 100px;
+    }
+
+    .carousel-wrapper {
+        position: relative;
+        width: 1020px; /* Wider to accommodate buttons */
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .carousel-container {
+        width: 900px;
+        overflow: hidden;
+        padding: 20px 0;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 15px;
+        padding: 0;
+        width: 100%;
+    }
+
+    .carousel-btn {
+        position: relative; /* Changed from absolute */
+        transform: translateY(0); /* Reset transform */
+        background: transparent;
+        border: 2px solid #3AE3AE;
+        border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        color: #3AE3AE;
+        font-size: 16px;
+        z-index: 10;
+        transition: all 0.3s ease;
+        flex-shrink: 0; /* Prevent button from shrinking */
+    }
+
+    .carousel-btn:hover {
+        background: #3AE3AE20;
+        box-shadow: 0 0 15px #3AE3AE50;
+    }
+
+    .carousel-btn:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .carousel-btn.prev {
+        left: -60px;
+    }
+
+    .carousel-btn.next {
+        right: -60px;
+    }
+
+    .algo-card {
+        min-width: calc((900px - 30px) / 3);  /* Exact width for 3 cards with gaps */
+        max-width: calc((900px - 30px) / 3);
+        flex: 0 0 auto;
+        background: #2A2E35;
+        border: 1px solid #3AE3AE30;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 0;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .algo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #3AE3AE, transparent);
+        transform: translateX(-100%);
+        transition: transform 0.5s ease;
+    }
+
+    .algo-card:hover::before {
+        transform: translateX(100%);
+    }
+
+    .algo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(58, 227, 174, 0.15);
+        border-color: #3AE3AE50;
+    }
+
+    .algo-card h3 {
+        color: #3AE3AE;
+        margin-bottom: 10px;  /* Reduced margin */
+        font-family: 'Consolas', monospace;
+        font-size: 1.1em;  /* Smaller font size */
+        white-space: nowrap;  /* Prevent title wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .algo-card p {
+        color: #CCC;
+        font-size: 0.85em;  /* Smaller font size */
+        line-height: 1.4;
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;  /* Limit to 2 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.8em;  /* Fixed height for 2 lines */
+    }
+
+    .algo-icon {
+        display: flex;
+        align-items: center;
+        gap: 8px;  /* Reduced gap */
+        color: #3AE3AE;
+        font-family: 'Consolas', monospace;
+        font-size: 0.9em;  /* Smaller font size */
+    }
+
+    .algo-icon::before {
+        content: '>';
+        color: #3AE3AE;
+    }
+
+    .algo-icon i {
+        font-size: 1.2em;
+        opacity: 0.8;
+    }
+
+    /* Add terminal-like header to cards */
+    .algo-card::after {
+        content: '• • •';
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #3AE3AE50;
+        letter-spacing: 2px;
+        font-size: 12px;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- NAVBAR  -->
+        <div class="navbar">
+            <div class="logo">
+                <lottie-player src="assets\animated\Animation - 1738353907797.json"  background="transparent"  speed="1"  style="width: 50px; height: 50px;"  loop  autoplay></lottie-player>
+                 MLAlgoLab</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="algorithm.html">Algorithms</a></li>       
+                    <li><a href="#">About me.</a></li>
+                </ul>
+            </nav>
+            <button class="sign-in" style="background-color:#3AE3AE;">Sign in</button>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Democratizing Machine Learning: Run Algorithms With Ease</h1>
+                <p>...  </p>
+                <div class="buttons">
+                    <!-- <button class="select">Select</button>
+                    <button class="try-demo">Try demo</button> -->
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <lottie-player src="assets\animated\Animation - 1738352885182.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </div>
+        </section>
+
+        <!-- Algorithm Carousel Section -->
+        <section class="algorithm-carousel" style="margin: 50px 0;">
+            <h2 style="text-align: center; color: white; margin-bottom: 30px;">Our Algorithms</h2>
+            
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev" onclick="moveCarousel(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        <!-- Algorithm Cards -->
+                        <div class="algo-card">
+                            <h3>Linear Regression</h3>
+                            <p>Predict continuous values using linear relationships between variables.</p>
+                            <div class="algo-icon">
+                                <i class="fas fa-chart-line"></i>
+                                
+                            </div>
+                        </div>
+
+                        <div class="algo-card">
+                            <h3>Decision Tree</h3>
+                            <p>Make decisions through tree-like graphs of decisions and their outcomes.</p>
+                            <div class="algo-icon">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                        </div>
+
+                        <div class="algo-card">
+                            <h3>Logistic Regression</h3>
+                            <p>Classify categorical outcomes using probability estimation.</p>
+                            <div class="algo-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+
+                        <div class="algo-card">
+                            <h3>SVM</h3>
+                            <p>Classify data by finding the best hyperplane that separates classes.</p>
+                            <div class="algo-icon">
+                                <i class="fas fa-border-all"></i>
+                            </div>
+                        </div>
+
+                        <div class="algo-card">
+                            <h3>K-Means</h3>
+                            <p>Group similar data points into clusters using centroid-based clustering.</p>
+                            <div class="algo-icon">
+                                <i class="fas fa-object-group"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-btn next" onclick="moveCarousel(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+        
+        <section class="stats">
+            <div class="stat-card">
+                <p>Active users</p>
+                <h2>0+</h2>
+                <div class="avatars">
+                    <img src="assets/icons/boy.png" alt="User">
+                    <img src="assets/icons/woman.png" alt="User">
+                    <img src="assets/icons/man.png" alt="User">
+                    <img src="assets/icons/hacker.png" alt="User">
+                </div>
+
+            </div>
+            <div class="stat-card">
+                <p>Datasets available</p>
+                <h2>0+</h2>
+                <lottie-player src="assets/animated/Animation - Databse.json"  background="transparent"  speed="1"  style="width: 80px; height: 70px;"  loop  autoplay></lottie-player>
+            </div>
+            <div class="stat-card">
+                <p>No. of Algorithms</p>
+                <h2>3</h2>
+                <lottie-player src="assets/animated/Code_custom_icon.json"  background="transparent"  speed="1"  style="width: 80px; height:70px;"  loop  autoplay></lottie-player>
+            </div>
+            <!-- <div class="stat-card">
+
+
+                <p>Get started now</p>
+                <h2>Explore</h2>
+                <img src="assets/icons/settings.png" alt="Settings Icon">
+            </div> -->
+        </section>
+    </main>
+    <footer style="width: 100%; background-color: #31363F; padding: 40px 0; margin-top: 50px;">
+        <div class="footer-content" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0 20px;">
+            <!-- Brand Section -->
+            <div style="color: white;">
+                <h3 style="color: #3AE3AE; margin-bottom: 20px;">{ MLAlgoLab }</h3>
+                <p style="color: #888;">Empowering developers with ML algorithms, one line of code at a time. 🚀</p>
+                <div style="margin-top: 20px;">
+                    <code style="background: #2A2E35; padding: 8px; border-radius: 4px; color: #3AE3AE;">
+                        while(alive) { keepCoding(); }
+                    </code>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h4 style="color: #3AE3AE; margin-bottom: 20px;">Quick Links</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-chevron-right" style="color: #3AE3AE; margin-right: 8px;"></i>Home
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-chevron-right" style="color: #3AE3AE; margin-right: 8px;"></i>Algorithms
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-chevron-right" style="color: #3AE3AE; margin-right: 8px;"></i>Documentation
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h4 style="color: #3AE3AE; margin-bottom: 20px;">Resources</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-code" style="color: #3AE3AE; margin-right: 8px;"></i>API Reference
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-book" style="color: #3AE3AE; margin-right: 8px;"></i>Tutorials
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-graduation-cap" style="color: #3AE3AE; margin-right: 8px;"></i>Learn ML
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Connect -->
+            <div>
+                <h4 style="color: #3AE3AE; margin-bottom: 20px;">Connect</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fab fa-github" style="color: #3AE3AE; margin-right: 8px;"></i>GitHub
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fab fa-discord" style="color: #3AE3AE; margin-right: 8px;"></i>Discord
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="#" style="color: #888; text-decoration: none; transition: color 0.3s;">
+                            <i class="fas fa-envelope" style="color: #3AE3AE; margin-right: 8px;"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright Bar -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #2A2E35;">
+            <p style="color: #888; font-size: 14px;">
+                <span style="color: #3AE3AE;">&lt;/&gt;</span> with 🖤 by Zubrist  
+                <span style="color: #3AE3AE;">...<span style="color: #3AE3AE;"></span>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Get the sign-in button
+        const signInButton = document.querySelector('.sign-in');
+        
+        // Add click event listener
+        signInButton.addEventListener('click', function() {
+            // Redirect to signin.html
+            window.location.href = 'signin.html';
+        });
+    </script>
+    <script>
+        // Function to fetch and update stats
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+
+                // Update active users
+                document.querySelector('.stat-card:nth-child(1) h2').textContent = 
+                    `${data.active_users}+`;
+
+                // Update datasets count
+                document.querySelector('.stat-card:nth-child(2) h2').textContent = 
+                    `${data.dataset_count}+`;
+
+                // Update total size
+                // document.querySelector('.stat-card:nth-child(3) h2').textContent = 
+                //     `${data.total_size_tb}TB+`;
+
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        // Call updateStats when page loads
+        document.addEventListener('DOMContentLoaded', updateStats);
+
+
+        const track = document.querySelector('.carousel-track');
+        const cards = document.querySelectorAll('.algo-card');
+        let currentIndex = 0;
+        const cardsToShow = 3;
+
+        function moveCarousel(direction) {
+            const cardWidth = cards[0].offsetWidth + 15; // Width + gap
+            const maxIndex = cards.length - cardsToShow;
+            
+            currentIndex += direction;
+
+            // Handle circular navigation
+            if (currentIndex < 0) {
+                currentIndex = maxIndex;
+            } else if (currentIndex > maxIndex) {
+                currentIndex = 0;
+            }
+
+            // Move the track
+            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
+
+        function updateButtonStates() {
+            const prevBtn = document.querySelector('.carousel-btn.prev');
+            const nextBtn = document.querySelector('.carousel-btn.next');
+            
+            // Always enable buttons for circular navigation
+            prevBtn.style.opacity = '1';
+            nextBtn.style.opacity = '1';
+            prevBtn.disabled = false;
+            nextBtn.disabled = false;
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const cardWidth = cards[0].offsetWidth + 15;
+            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        });
+
+        // Initial setup
+        updateButtonStates();
+    </script>
+    
+</body>
+</html>

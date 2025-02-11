@@ -1,0 +1,101 @@
+ID,Age,Gender,Occupation,Experience,Salary,City
+1,23,Male,Engineer,1,33037,New York
+2,26,Female,Teacher,4,42074,Los Angeles
+3,29,Male,Doctor,7,51111,Chicago
+4,32,Female,Artist,10,60148,Houston
+5,35,Male,Lawyer,13,69185,Phoenix
+6,38,Female,Scientist,16,78222,New York
+7,41,Male,Manager,19,87259,Los Angeles
+8,44,Female,Engineer,22,96296,Chicago
+9,47,Male,Teacher,25,105333,Houston
+10,50,Female,Doctor,28,,Phoenix
+11,53,Male,Artist,31,123407,New York
+12,56,Female,Lawyer,34,132444,Los Angeles
+13,59,Male,Scientist,37,141481,Chicago
+14,62,Female,Manager,40,150518,Houston
+15,65,Male,Engineer,,159555,Phoenix
+16,22,Female,Teacher,0,30592,New York
+17,25,Male,,3,39629,Los Angeles
+18,28,Female,Artist,6,48666,Chicago
+19,31,Male,Lawyer,9,57703,Houston
+20,34,Female,Scientist,12,,Phoenix
+21,37,Male,Manager,15,75777,New York
+22,40,Female,Engineer,18,84814,Los Angeles
+23,43,Male,Teacher,21,93851,
+24,46,Female,Doctor,24,102888,Houston
+25,49,Male,Artist,27,111925,Phoenix
+26,52,Female,Lawyer,30,120962,New York
+27,55,Male,Scientist,33,129999,Los Angeles
+28,58,Female,Manager,36,139036,Chicago
+29,61,Male,Engineer,39,148073,Houston
+30,64,Female,Teacher,42,,Phoenix
+31,21,Male,Doctor,0,31147,New York
+32,24,Female,Artist,2,37184,Los Angeles
+33,27,Male,Lawyer,5,46221,Chicago
+34,30,Female,,8,55258,Houston
+35,33,Male,Manager,11,64295,Phoenix
+36,36,Female,Engineer,14,73332,New York
+37,39,Male,Teacher,17,82369,Los Angeles
+38,42,Female,Doctor,20,91406,Chicago
+39,45,Male,Artist,23,100443,Houston
+40,48,Female,Lawyer,26,,Phoenix
+41,51,Male,Scientist,29,118517,New York
+42,54,Female,Manager,32,127554,Los Angeles
+43,57,Male,Engineer,35,136591,Chicago
+44,60,Female,Teacher,38,145628,Houston
+45,63,Male,Doctor,41,154665,Phoenix
+46,20,Female,Artist,0,31702,
+47,23,Male,Lawyer,1,34739,Los Angeles
+48,26,Female,Scientist,4,43776,Chicago
+49,29,Male,Manager,7,52813,Houston
+50,32,Female,Engineer,10,,Phoenix
+51,35,Male,,13,70887,New York
+52,38,Female,Doctor,16,79924,Los Angeles
+53,41,Male,Artist,19,88961,Chicago
+54,44,Female,Lawyer,22,97998,Houston
+55,47,Male,Scientist,25,107035,Phoenix
+56,50,Female,Manager,28,116072,New York
+57,53,Male,Engineer,31,125109,Los Angeles
+58,56,Female,Teacher,34,134146,Chicago
+59,59,Male,Doctor,37,143183,Houston
+60,62,Female,Artist,40,,Phoenix
+61,65,Male,Lawyer,43,161257,New York
+62,22,Female,Scientist,0,32294,Los Angeles
+63,25,Male,Manager,3,41331,Chicago
+64,28,Female,Engineer,6,50368,Houston
+65,31,Male,Teacher,9,59405,Phoenix
+66,34,Female,Doctor,12,68442,New York
+67,37,Male,Artist,15,77479,Los Angeles
+68,40,Female,,18,86516,Chicago
+69,43,Male,Scientist,21,95553,
+70,46,Female,Manager,24,,Phoenix
+71,49,Male,Engineer,27,113627,New York
+72,52,Female,Teacher,30,122664,Los Angeles
+73,55,Male,Doctor,33,131701,Chicago
+74,58,Female,Artist,36,140738,Houston
+75,61,Male,Lawyer,,149775,Phoenix
+76,64,Female,Scientist,42,158812,New York
+77,21,Male,Manager,0,32849,Los Angeles
+78,24,Female,Engineer,2,38886,Chicago
+79,27,Male,Teacher,5,47923,Houston
+80,30,Female,Doctor,8,,Phoenix
+81,33,Male,Artist,11,65997,New York
+82,36,Female,Lawyer,14,75034,Los Angeles
+83,39,Male,Scientist,17,84071,Chicago
+84,42,Female,Manager,20,93108,Houston
+85,45,Male,,23,102145,Phoenix
+86,48,Female,Teacher,26,111182,New York
+87,51,Male,Doctor,29,120219,Los Angeles
+88,54,Female,Artist,32,129256,Chicago
+89,57,Male,Lawyer,35,138293,Houston
+90,60,Female,Scientist,38,,Phoenix
+91,63,Male,Manager,41,156367,New York
+92,20,Female,Engineer,0,33404,
+93,23,Male,Teacher,1,36341,Chicago
+94,26,Female,Doctor,4,45478,Houston
+95,29,Male,Artist,7,54515,Phoenix
+96,32,Female,Lawyer,10,63552,New York
+97,35,Male,Scientist,13,72589,Los Angeles
+98,38,Female,Manager,16,81626,Chicago
+99,41,Male,Engineer,19,90663,Houston
+100,44,Female,Teacher,22,,Phoenix

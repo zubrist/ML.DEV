@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Regression</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <!-- Lottie Animations -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    body {
+      background-color: #222831;
+      color: white;
+    }
+    .container-custom {
+      background-color: #31363f;
+      padding: 1.5rem;
+      border-radius: 10px;
+      height: auto;
+      min-height: 200px;
+      overflow-y: auto;
+    }
+    .btn-custom {
+      background-color: #00ddb3;
+      color: #222831;
+      border: none;
+    }
+    .btn-custom:hover {
+      background-color: #00bfa6;
+    }
+    .table-container {
+      max-height: 250px;
+      overflow-y: auto;
+      background-color: #31363f;
+      border: 1px solid rgba(0, 221, 179, 0.2);
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .dataset-header {
+      display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1 rem;
+    }
+
+    .shape-info {
+        background-color: rgba(0, 221, 179, 0.2);
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        border: 1px solid rgba(0, 221, 179, 0.3);
+        display: inline-flex;
+        align-items: center;
+        margin-left: 1rem;
+        white-space: nowrap;
+    }
+
+    .results-container {
+        display: flex;
+        flex-direction: column;
+      gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .result-group {
+        background: rgba(0, 221, 179, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 221, 179, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .result-group:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 221, 179, 0.1);
+    }
+
+    .result-group h5 {
+        color: #00ddb3;
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .result-group p {
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+
+    .status-updates {
+        margin-top: 1rem;
+        padding: 0.8rem;
+        border-radius: 8px;
+        background: rgba(0, 221, 179, 0.05);
+        font-size: 0.9rem;
+        color: #00ddb3;
+    }
+
+    .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+    }
+
+    .btn-custom.loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+    .btn-custom.loading .spinner-border {
+        margin-right: 0.5rem;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .preview-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .preview-table, .preview-plot {
+        width: 100%;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table-dark {
+        background-color: transparent;
+        color: #ffffff;
+    }
+
+    .table-dark th {
+        background-color: rgba(0, 221, 179, 0.1);
+        color: #00ddb3;
+        font-weight: 600;
+        border-color: rgba(0, 221, 179, 0.2);
+    }
+
+    .table-dark td {
+        border-color: rgba(0, 221, 179, 0.2);
+        padding: 0.5rem;
+    }
+
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: rgba(0, 221, 179, 0.05);
+    }
+
+    #scatter-plot {
+        width: 100%;
+        height: auto;
+        max-height: 250px;
+        object-fit: contain;
+        border-radius: 8px;
+        transition: opacity 0.3s ease;
+    }
+
+    .preview-plot {
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .form-select, .btn-custom {
+        padding: 0.5rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 221, 179, 0.05);
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 221, 179, 0.3);
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 221, 179, 0.5);
+    }
+
+    /* Adjust text sizes */
+    h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+
+    /* Modal for enlarged plots */
+    .plot-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .plot-modal.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .plot-modal img {
+        max-width: 90%;
+        max-height: 90vh;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 221, 179, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .plot-modal.active img {
+        transform: scale(1);
+    }
+
+    /* Make plots clickable */
+    #scatter-plot, #plot {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    #scatter-plot:hover, #plot:hover {
+        transform: scale(1.02);
+    }
+
+    /* Add styles for form section */
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    /* Update preview section styles */
+    .preview-section {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .preview-placeholder {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .preview-placeholder i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: rgba(0, 221, 179, 0.3);
+    }
+
+    .preview-placeholder p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* Add border separation between sections */
+    .section-border {
+        border: 1px solid rgba(0, 221, 179, 0.2);
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Hide empty table initially */
+    .table-container:empty {
+        display: none;
+    }
+
+    .prediction-input {
+        background-color: #31363f !important;
+        color: white !important;
+        border: 1px solid rgba(0, 221, 179, 0.2) !important;
+    }
+
+    .prediction-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0, 221, 179, 0.25) !important;
+        border-color: rgba(0, 221, 179, 0.5) !important;
+    }
+
+    .prediction-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .prediction-value {
+        color: #00ddb3;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .prediction-result {
+        margin-top: 1rem;
+        padding: 0.8rem;
+        background: rgba(0, 221, 179, 0.05);
+        border-radius: 6px;
+        border: 1px solid rgba(0, 221, 179, 0.1);
+    }
+
+    .text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .input-group .btn-custom {
+        margin-bottom: 0;
+    }
+
+    .upload-section {
+        margin-top: 1rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(0, 221, 179, 0.2);
+        border-radius: 8px;
+        background: rgba(0, 221, 179, 0.05);
+    }
+
+    .upload-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .upload-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+      padding: 1rem;
+        width: 100%;
+        background: rgba(0, 221, 179, 0.1);
+        border: 2px dashed rgba(0, 221, 179, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .upload-button:hover {
+        background: rgba(0, 221, 179, 0.15);
+        border-color: rgba(0, 221, 179, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .upload-button:active {
+        transform: translateY(0);
+    }
+
+    .upload-button i {
+        font-size: 1.2rem;
+        color: #00ddb3;
+    }
+
+    .button-text {
+        font-weight: 500;
+    }
+
+    .file-type {
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
+
+    .upload-submit {
+        width: 100%;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-top: 1rem;
+        padding: 0.8rem;
+        background: rgba(0, 221, 179, 0.1);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .file-info i {
+        color: #00ddb3;
+    }
+
+    .btn-remove {
+        margin-left: auto;
+        color: #ff6b6b;
+        padding: 0.4rem;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-remove:hover {
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff8787;
+    }
+
+    .upload-progress {
+        margin-top: 1rem;
+    }
+
+    .progress-bar {
+        height: 4px;
+        background: rgba(0, 221, 179, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: 0.8rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0;
+        background: #00ddb3;
+        transition: width 0.3s ease;
+        position: relative;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        animation: shimmer 1.5s infinite;
+    }
+
+    .terminal-output {
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        border: 1px solid rgba(0, 221, 179, 0.2);
+        min-height: 60px;
+        margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .progress-text {
+        color: #00ffcc;
+        font-weight: 500;
+        transition: opacity 0.3s ease;
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.4;
+        max-width: 100%;
+        display: block;
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    }
+
+    .prompt {
+        color: #00ffaa;
+        margin-right: 0.5rem;
+        font-weight: bold;
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: #00ddb3;
+        margin-left: 4px;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+    }
+
+    .progress-bar {
+        height: 2px;
+        background: rgba(0, 221, 179, 0.1);
+        margin-top: 1rem;
+        border-radius: 1px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #00ddb3, #00ffcc);
+        transition: width 0.5s ease;
+        box-shadow: 0 0 10px rgba(0, 221, 179, 0.5);
+    }
+
+    .upload-submit.loading {
+        position: relative;
+        pointer-events: none;
+    }
+
+    .upload-submit.loading::after {
+        display: none;
+    }
+
+    .preprocessing-summary {
+        margin-bottom: 1rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    .preprocessing-summary ul {
+        list-style: none;
+        padding-left: 1rem;
+        margin: 0.5rem 0;
+    }
+
+    .preprocessing-summary li {
+        position: relative;
+        padding-left: 1.2rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .preprocessing-summary li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: #00ddb3;
+    }
+
+    .summary-section {
+        margin-bottom: 1rem;
+    }
+
+    .summary-section h4 {
+        color: #00ddb3;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .missing-values-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #31363f;
+        padding: 2rem;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 90%;
+        border: 1px solid rgba(0, 221, 179, 0.2);
+    }
+
+    .missing-values-list {
+        margin: 1.5rem 0;
+    }
+
+    .missing-value-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background: rgba(0, 221, 179, 0.05);
+        border-radius: 4px;
+    }
+
+    .handling-strategy {
+        background: #31363f;
+        color: white;
+        border: 1px solid rgba(0, 221, 179, 0.3);
+        padding: 0.3rem;
+        border-radius: 4px;
+        margin-left: 1rem;
+    }
+
+    .handling-strategy:focus {
+        outline: none;
+        border-color: rgba(0, 221, 179, 0.5);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        line-height: 1;
+        transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+        color: #fff;
+    }
+
+    .process-status {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    .status-text {
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .status-progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .missing-values-modal .modal-content {
+        position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* Update the file list item styles */
+    .file-item {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 221, 179, 0.05);
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin: 8px 0;
+        position: relative;
+        border: 1px solid rgba(0, 221, 179, 0.1);
+    }
+
+    .file-item .file-icon {
+        color: #00ddb3;
+        margin-right: 8px;
+        font-size: 1.1rem;
+    }
+
+    .file-item .file-name {
+        color: rgba(255, 255, 255, 0.9);
+        font-family: 'Courier New', monospace;
+        flex-grow: 1;
+        margin-right: 32px; /* Space for the remove button */
+    }
+
+    .file-item .remove-file {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 215, 0, 0.2);  /* Light yellow background */
+        border: none;
+        color: #00ddb3;  /* Green color matching upload button */
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    .file-item .remove-file:hover {
+        background: rgba(255, 215, 0, 0.3);  /* Slightly darker yellow on hover */
+        color: #00ffcc;  /* Lighter green on hover */
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    #submit-upload {
+        display: none;  /* Initially hidden */
+        margin-top: 1rem;
+    }
+
+    .file-list {
+        margin: 1rem 0;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 221, 179, 0.05);
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin: 8px 0;
+        position: relative;
+    }
+
+    .file-item .file-icon {
+        color: #00ddb3;
+        margin-right: 8px;
+    }
+
+    .file-item .file-name {
+        color: rgba(255, 255, 255, 0.9);
+        font-family: 'Courier New', monospace;
+        flex-grow: 1;
+        margin-right: 32px;
+    }
+
+    .file-item .remove-file {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 215, 0, 0.2);  /* Light yellow background */
+        border: none;
+        color: #00ddb3;  /* Green color matching upload button */
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    .file-item .remove-file:hover {
+        background: rgba(255, 215, 0, 0.3);  /* Slightly darker yellow on hover */
+        color: #00ffcc;  /* Lighter green on hover */
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    #submit-upload {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    .upload-button {
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg" style="background-color: #222831">
+    <div class="container-fluid">
+      <lottie-player src="assets/animated/Animation - 1738353907797.json" background="transparent" speed="1" style="width: 50px; height: 50px;" loop autoplay></lottie-player>
+      <a class="navbar-brand text-white" href="algorithm.html">Algorithms</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Layout -->
+  <div class="container mt-4">
+    <div class="row">
+        <!-- Form Section (Left) - 30% -->
+        <div class="col-md-3">
+            <div class="container-custom section-border">
+                <div class="form-section">
+          <h3>Linear Regression</h3>
+          <form id="algorithm-form" autocomplete="off">
+            <div class="mb-3">
+              <label for="dataset" class="form-label">Select Dataset:</label>
+              <select id="dataset" name="dataset" class="form-select" style="background-color: #7fd9ec69;"></select>
+            </div>
+            <div class="mb-3">
+              <label for="feature" class="form-label">Select Feature Column:</label>
+              <select id="feature" name="feature" class="form-select" style="background-color: #7fd9ec69;"></select>
+            </div>
+            <div class="mb-3">
+              <label for="target" class="form-label">Select Target Column:</label>
+              <select id="target" name="target" class="form-select" style="background-color: #7fd9ec69;"></select>
+            </div>
+            <button type="submit" id="run-button" class="btn btn-custom w-100">Run Algorithm</button>
+          </form>
+                    <div id="status-updates" class="status-updates" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span id="status-text">Initializing...</span>
+        </div>
+      </div>
+
+                    <div class="upload-section mt-4">
+                        <h5>Upload Dataset</h5>
+                        <div class="upload-container">
+                            <label class="upload-button" for="file-upload">
+                                <i class="fas fa-terminal"></i>
+                                <span class="button-text">Select File</span>
+                                <span class="file-type">.csv</span>
+                            </label>
+                            <input type="file" 
+                                   id="file-upload" 
+                                   accept=".csv" 
+                                   style="display: none;">
+                        </div>
+                        
+                        <button id="submit-upload" 
+                                class="btn btn-custom upload-submit" 
+                                style="display: none;">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload Dataset</span>
+                        </button>
+                        
+                        <div class="file-list"></div>
+                        
+                        <div class="upload-progress" style="display: none;">
+                            <div class="terminal-output">
+                                <span class="prompt">$</span>
+                                <span class="progress-text"></span>
+                                <span class="cursor"></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section (Middle) - 50% -->
+        <div class="col-md-5">
+            <div class="container-custom section-border">
+                <div class="dataset-header">
+                    <h4>Dataset Preview</h4>
+                    <div id="dataset-info" class="shape-info" style="display: none;">
+                        <!-- Shape info will appear here -->
+                    </div>
+                </div>
+                
+                <!-- Add placeholder for empty state -->
+                <div class="preview-section" id="preview-placeholder">
+                    <div class="preview-placeholder">
+                        <i class="fas fa-database"></i>
+                        <p>Select a dataset to preview data</p>
+                    </div>
+                </div>
+
+                <div class="preview-layout" style="display: none;">
+                    <div class="preview-table">
+          <div class="table-container">
+            <table class="table table-dark table-striped">
+              <thead id="table-head"></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+                    </div>
+                    <div class="preview-plot">
+                        <img id="scatter-plot" src="" alt="Scatter Plot" style="display: none;">
+                    </div>
+                </div>
+
+          <!-- Regression Plot -->
+          <h4>Regression Plot</h4>
+                <img id="plot" src="" alt="Linear Regression Plot" style="width: 100%; display: none;">
+        </div>
+      </div>
+
+        <!-- Results Section (Right) - 20% -->
+        <div class="col-md-4">
+            <div class="container-custom section-border">
+                <h4>Results</h4>
+                <!-- Add placeholder for empty state -->
+                <div class="preview-section" id="results-placeholder">
+                    <div class="preview-placeholder">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Run the algorithm to see results</p>
+    </div>
+                </div>
+                <div class="results-container" style="display: none;">
+                    <div class="result-group">
+                        <h5>Model Performance</h5>
+                        <p><strong>Mean Squared Error:</strong> <span id="mse"></span></p>
+                        <p><strong>Root Mean Squared Error:</strong> <span id="rmse"></span></p>
+                        <p><strong>Mean Absolute Error:</strong> <span id="mae"></span></p>
+                        <p><strong>R² Score:</strong> <span id="r2_score"></span></p>
+                    </div>
+                    
+                    <div class="result-group">
+                        <h5>Model Details</h5>
+                        <p><strong>Regression Equation:</strong> <span id="equation"></span></p>
+                        <p><strong>Prediction Interval (95%):</strong> ±<span id="prediction_interval"></span></p>
+                    </div>
+                    
+                    <div class="result-group">
+                        <h5>Dataset Information</h5>
+                        <p><strong>Training Set Size:</strong> <span id="train_size"></span></p>
+                        <p><strong>Test Set Size:</strong> <span id="test_size"></span></p>
+                        <p><strong>Target Mean:</strong> <span id="mean_target"></span></p>
+                        <p><strong>Target Std Dev:</strong> <span id="std_target"></span></p>
+                    </div>
+
+                    <!-- Add this in the Results Section, after the existing result-groups -->
+                    <div class="result-group prediction-section" style="display: none;">
+                        <h5>Make Predictions</h5>
+                        <div class="input-group mb-3">
+                            <input type="number" 
+                                   class="form-control prediction-input" 
+                                   id="prediction-input"
+                                   placeholder="Enter value..." 
+                                   style="background-color: #31363f; color: white; border-color: rgba(0, 221, 179, 0.2);">
+                            <button class="btn btn-custom" id="predict-btn" type="button">
+                                Predict
+                            </button>
+                        </div>
+                        <div class="prediction-result" style="display: none;">
+                            <p class="mb-2">
+                                <strong>Predicted Value:</strong> 
+                                <span id="prediction-value" class="prediction-value"></span>
+                            </p>
+                            <p class="mb-0">
+                                <small class="text-muted">
+                                    Confidence Interval (95%): 
+                                    <span id="prediction-interval-range"></span>
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Add this to your results container div -->
+                    <div class="result-group preprocessing-summary" style="display: none;">
+                        <h5>Preprocessing Summary</h5>
+                        <div class="summary-content">
+                            <!-- Content will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Add this HTML after your existing content but before closing body tag -->
+  <div id="plotModal" class="plot-modal">
+    <img id="modalImage" src="" alt="Enlarged Plot">
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const datasetSelect = document.getElementById("dataset");
+      const featureSelect = document.getElementById("feature");
+      const targetSelect = document.getElementById("target");
+      const tableHead = document.getElementById("table-head");
+      const tableBody = document.getElementById("table-body");
+      const mseOutput = document.getElementById("mse");
+      const rmseOutput = document.getElementById("rmse");
+      const maeOutput = document.getElementById("mae");
+      const r2_scoreOutput = document.getElementById("r2_score");
+      const equationOutput = document.getElementById("equation");
+      const prediction_intervalOutput = document.getElementById("prediction_interval");
+      const train_sizeOutput = document.getElementById("train_size");
+      const test_sizeOutput = document.getElementById("test_size");
+      const mean_targetOutput = document.getElementById("mean_target");
+      const std_targetOutput = document.getElementById("std_target");
+      const plotImg = document.getElementById("plot");
+      const scatterPlotImg = document.getElementById("scatter-plot");
+      const datasetInfoContainer = document.getElementById("dataset-info");
+
+      let datasetsLoaded = false;
+      let columnsLoaded = false;
+
+      datasetSelect.addEventListener('click', async function() {
+          // Only fetch if datasets haven't been loaded yet
+          if (!datasetsLoaded) {
+              try {
+                  const response = await fetch('/api/datasets/linear_regression');
+                  const data = await response.json();
+                  
+                  if (data.datasets.length === 0) {
+                      datasetSelect.innerHTML = '<option value="">No datasets available</option>';
+                  } else {
+                      // Clear existing options
+                      datasetSelect.innerHTML = '<option value="">Select a dataset</option>';
+                      
+                      // Add new options
+                      data.datasets.forEach(dataset => {
+                          const option = document.createElement('option');
+                          option.value = dataset;
+                          option.textContent = dataset;
+                          datasetSelect.appendChild(option);
+                      });
+                  }
+                  
+                  datasetsLoaded = true;  // Mark datasets as loaded
+              } catch (error) {
+                  console.error('Error fetching datasets:', error);
+                  datasetSelect.innerHTML = '<option value="">Error loading datasets</option>';
+              }
+          }
+      });
+
+      // Optional: Add a focus event listener for better UX
+      datasetSelect.addEventListener('focus', function() {
+          if (!datasetsLoaded) {
+              // Trigger the click event to load datasets
+              this.click();
+          }
+      });
+
+      // Fetch columns when dataset is selected
+      datasetSelect.addEventListener("change", function () {
+        const dataset = datasetSelect.value;
+        
+        // Hide placeholder and show preview layout
+        document.getElementById('preview-placeholder').style.display = 'none';
+        document.querySelector('.preview-layout').style.display = 'flex';
+        
+        // Fetch columns
+        fetch(`/api/dataset_columns/${dataset}`)
+          .then(response => response.json())
+          .then(data => {
+            featureSelect.innerHTML = data.columns.map(col => `<option value="${col}">${col}</option>`).join("");
+            targetSelect.innerHTML = data.columns.map(col => `<option value="${col}">${col}</option>`).join("");
+                
+                // Update scatter plot after columns are loaded
+                if (featureSelect.value && targetSelect.value) {
+                    updateScatterPlot();
+                }
+          })
+            .catch(error => console.error("Error:", error));
+
+        // Fetch dataset preview
+        fetch(`/api/dataset_preview/${dataset}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.preview) {
+              updateDatasetTable(data.preview);
+              updateDatasetInfo(data);
+            }
+          })
+            .catch(error => console.error("Error fetching preview:", error));
+      });
+
+      function updateDatasetTable(data) {
+        if (data.length === 0) {
+          return;
+        }
+
+        // Clear existing headers and body
+        const tableHead = document.getElementById("table-head");
+        const tableBody = document.getElementById("table-body");
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        // Create header row
+        const headerRow = document.createElement("tr");
+        Object.keys(data[0]).forEach(column => {
+          const th = document.createElement("th");
+          th.textContent = column;
+          headerRow.appendChild(th);
+        });
+        tableHead.appendChild(headerRow);
+
+        // Create body rows
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          Object.values(row).forEach(value => {
+            const td = document.createElement("td");
+            td.textContent = value;
+            tr.appendChild(td);
+          });
+            tableBody.appendChild(tr);
+        });
+      }
+
+      function updateDatasetInfo(data) {
+        const datasetInfoContainer = document.getElementById("dataset-info");
+        if (data && data.shape) {
+            datasetInfoContainer.innerHTML = `<strong>Shape:</strong> ${data.shape[0]} rows × ${data.shape[1]} columns`;
+            datasetInfoContainer.style.display = 'inline-flex';
+        } else {
+            datasetInfoContainer.style.display = 'none';
+        }
+      }
+
+      // Handle form submission
+      document.getElementById("algorithm-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const dataset = datasetSelect.value;
+        const feature = featureSelect.value;
+        const target = targetSelect.value;
+        
+        // Show loading state
+        const runButton = document.getElementById("run-button");
+        const statusUpdates = document.getElementById("status-updates");
+        const statusText = document.getElementById("status-text");
+        
+        runButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Running...';
+        runButton.classList.add('loading');
+        statusUpdates.style.display = 'block';
+        
+        // Clear previous results
+        document.querySelectorAll('.result-group span').forEach(span => span.textContent = '');
+        plotImg.style.display = "none";
+
+        try {
+            // Status updates simulation
+            const updateStatus = (text) => {
+                statusText.textContent = text;
+            };
+
+            updateStatus("Calling API...");
+            await new Promise(r => setTimeout(r, 500));
+
+            updateStatus("Splitting data into training and test sets...");
+            await new Promise(r => setTimeout(r, 600));
+
+            updateStatus("Training linear regression model...");
+            await new Promise(r => setTimeout(r, 800));
+
+            updateStatus("Calculating model metrics...");
+            await new Promise(r => setTimeout(r, 400));
+
+          const response = await fetch("/api/run_linear_regression", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dataset, feature, target })
+          });
+
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+            updateStatus("Generating regression plots...");
+            await new Promise(r => setTimeout(r, 600));
+
+            updateStatus("Computing prediction intervals...");
+            await new Promise(r => setTimeout(r, 400));
+
+          const data = await response.json();
+
+            // Hide placeholder and show results container
+            document.getElementById('results-placeholder').style.display = 'none';
+            document.querySelector('.results-container').style.display = 'flex';
+
+            // Update metrics with proper formatting
+            mseOutput.innerText = Number(data.mse).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            rmseOutput.innerText = Number(data.rmse).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            maeOutput.innerText = Number(data.mae).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            r2_scoreOutput.innerText = Number(data.r2_score).toLocaleString(undefined, { maximumFractionDigits: 4 });
+            equationOutput.innerText = data.equation;
+            prediction_intervalOutput.innerText = Number(data.prediction_interval).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            train_sizeOutput.innerText = data.train_size;
+            test_sizeOutput.innerText = data.test_size;
+            mean_targetOutput.innerText = Number(data.mean_target).toLocaleString(undefined, { maximumFractionDigits: 2 });
+            std_targetOutput.innerText = Number(data.std_target).toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+            // Show regression plot
+            if (data.plot_path) {
+          plotImg.src = `/static/${data.plot_path}?${Date.now()}`;
+          plotImg.style.display = "block";
+            }
+
+            // Add animation to results
+            document.querySelectorAll('.result-group').forEach(group => {
+                group.classList.add('fade-in');
+            });
+
+            updateStatus("Complete!");
+            
+            // Store model parameters for prediction
+            currentModel = {
+                coefficient: data.coefficients[0],
+                intercept: data.intercept,
+                prediction_interval: data.prediction_interval
+            };
+
+            // Show prediction section
+            predictionSection.style.display = 'block';
+            predictionInput.placeholder = `Enter ${featureSelect.value} value...`;
+            
+            // Hide preprocessing summary when running algorithm
+            document.querySelector('.preprocessing-summary').style.display = 'none';
+            
+        } catch (error) {
+          console.error("Error:", error);
+            updateStatus("Error occurred. Please try again.");
+            predictionSection.style.display = 'none';
+        } finally {
+            setTimeout(() => {
+                runButton.innerHTML = 'Run Algorithm';
+                runButton.classList.remove('loading');
+                statusUpdates.style.display = 'none';
+            }, 2000);
+        }
+      });
+
+      // Update the scatter plot function
+      function updateScatterPlot() {
+        const dataset = datasetSelect.value;
+        const feature = featureSelect.value;
+        const target = targetSelect.value;
+
+        if (!dataset || !feature || !target) {
+            scatterPlotImg.style.display = "none";
+            return;
+        }
+
+        // Show loading state for scatter plot
+        scatterPlotImg.style.opacity = "0.5";
+
+        fetch(`/api/scatter_plot/${dataset}/${feature}/${target}`)
+          .then(response => response.json())
+          .then(data => {
+                if (data.plot) {
+                    const newImage = new Image();
+                    newImage.onload = function() {
+                        scatterPlotImg.src = `/static/${data.plot}?${Date.now()}`;
+                        scatterPlotImg.style.opacity = "1";
+            scatterPlotImg.style.display = "block";
+                    };
+                    newImage.src = `/static/${data.plot}?${Date.now()}`;
+                } else {
+                    console.error("No plot data received");
+                    scatterPlotImg.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching scatter plot:", error);
+                scatterPlotImg.style.display = "none";
+            });
+      }
+
+      // Add these event listeners after your existing ones
+      featureSelect.addEventListener("change", updateScatterPlot);
+      targetSelect.addEventListener("change", updateScatterPlot);
+
+      // Plot enlargement functionality
+      const plotModal = document.getElementById('plotModal');
+      const modalImage = document.getElementById('modalImage');
+      const plots = document.querySelectorAll('#scatter-plot, #plot');
+
+      plots.forEach(plot => {
+        plot.addEventListener('click', function() {
+          modalImage.src = this.src;
+          plotModal.classList.add('active');
+        });
+      });
+
+      plotModal.addEventListener('click', function(e) {
+        if (e.target === plotModal) {
+          plotModal.classList.remove('active');
+        }
+      });
+
+      // Close modal with escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && plotModal.classList.contains('active')) {
+          plotModal.classList.remove('active');
+        }
+      });
+
+      // Add these variables to your existing declarations
+      let currentModel = null;
+      const predictionSection = document.querySelector('.prediction-section');
+      const predictionInput = document.getElementById('prediction-input');
+      const predictBtn = document.getElementById('predict-btn');
+      const predictionResult = document.querySelector('.prediction-result');
+      const predictionValue = document.getElementById('prediction-value');
+      const predictionIntervalRange = document.getElementById('prediction-interval-range');
+
+      // Add prediction functionality
+      predictBtn.addEventListener('click', function() {
+        if (!currentModel || !predictionInput.value) return;
+
+        const inputValue = parseFloat(predictionInput.value);
+        const prediction = currentModel.coefficient * inputValue + currentModel.intercept;
+        const intervalLower = prediction - currentModel.prediction_interval;
+        const intervalUpper = prediction + currentModel.prediction_interval;
+
+        predictionValue.textContent = prediction.toLocaleString(undefined, { 
+            maximumFractionDigits: 2 
+        });
+        
+        predictionIntervalRange.textContent = `${intervalLower.toLocaleString(undefined, { 
+            maximumFractionDigits: 2 
+        })} to ${intervalUpper.toLocaleString(undefined, { 
+            maximumFractionDigits: 2 
+        })}`;
+
+        predictionResult.style.display = 'block';
+        
+        // Add animation
+        predictionResult.classList.remove('fade-in');
+        void predictionResult.offsetWidth; // Trigger reflow
+        predictionResult.classList.add('fade-in');
+      });
+
+      // Add input validation
+      predictionInput.addEventListener('input', function() {
+        if (this.value && !isNaN(this.value)) {
+            predictBtn.disabled = false;
+        } else {
+            predictBtn.disabled = true;
+        }
+      });
+
+      // Add this to your existing DOMContentLoaded event listener
+      const fileUpload = document.getElementById('file-upload');
+      const submitUpload = document.getElementById('submit-upload');
+      const fileInfo = document.querySelector('.file-info');
+      const fileName = document.querySelector('.file-name');
+      const uploadProgress = document.querySelector('.upload-progress');
+      const progressFill = document.querySelector('.progress-fill');
+      const progressText = document.querySelector('.progress-text');
+      const uploadButton = document.querySelector('.upload-button');
+
+      let currentFile = null;
+
+      // File selection handler
+      fileUpload.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+              displayFile(file);
+              submitUpload.style.display = 'block';
+          }
+      });
+
+      /**
+       * Displays the selected file in the UI
+       * Creates a file item with remove button functionality
+       * @param {File} file - The selected file object
+       */
+      function displayFile(file) {
+          const fileList = document.querySelector('.file-list');
+          fileList.innerHTML = ''; // Clear any previously displayed files
+          
+          // Create file item element with icon, name and remove button
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file-item';
+          fileItem.innerHTML = `
+              <span class="file-icon">📄</span>
+              <span class="file-name">${file.name}</span>
+              <button class="remove-file" title="Remove file">×</button>
+          `;
+
+          // Add remove button functionality
+          const removeBtn = fileItem.querySelector('.remove-file');
+          removeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              // Clean up when file is removed
+              fileItem.remove();
+              fileUpload.value = '';
+              submitUpload.style.display = 'none';
+              uploadProgress.style.display = 'none';
+              progressFill.style.width = '0%';
+              progressText.textContent = '';
+          });
+
+          fileList.appendChild(fileItem);
+      }
+
+      // Upload button handler - restore the original working version
+      submitUpload.addEventListener('click', async function() {
+          const file = fileUpload.files[0];
+          if (!file) return;
+
+          // Initialize upload process
+          currentFile = file.name;
+          uploadProgress.style.display = 'block';
+          submitUpload.disabled = true;
+          submitUpload.classList.add('loading');
+
+          // Prepare form data for upload
+          const formData = new FormData();
+          formData.append('file', file);
+
+          try {
+              // Show step-by-step progress with delays for better UX
+              updateUploadProgress("$ Init: Starting upload process...", 0);
+              await new Promise(r => setTimeout(r, 800));
+              
+              updateUploadProgress("$ Validate: Checking file format...", 15);
+              await new Promise(r => setTimeout(r, 600));
+              
+              updateUploadProgress("$ Read: Loading CSV data...", 30);
+              await new Promise(r => setTimeout(r, 700));
+
+              // Make API call to upload the file
+              const response = await fetch('/api/upload_dataset/linear_regression', {
+                  method: 'POST',
+                  body: formData
+              });
+
+              // Handle API response errors
+              if (!response.ok) {
+                  const error = await response.json();
+                  throw new Error(error.detail || 'Upload failed');
+              }
+
+              // Process the response data
+              const data = await response.json();
+              if (!data || !data.preprocessing_summary) {
+                  throw new Error('Invalid response from server');
+              }
+
+              currentFile = data.filename;
+
+              // Check and handle missing values if any
+              if (data.preprocessing_summary.missing_values && 
+                  Object.keys(data.preprocessing_summary.missing_values).length > 0) {
+                  // Show missing values modal if needed
+                  updateUploadProgress("$ Validate: Missing values detected", 50);
+                  showMissingValuesModal(data.preprocessing_summary.missing_values);
+              } else {
+                  // Process dataset without missing values handling
+                  updateUploadProgress("$ Process: Optimizing dataset...", 75);
+                  await new Promise(r => setTimeout(r, 600));
+
+                  updateUploadProgress("$ Complete: Dataset ready! ✨", 100);
+                  
+                  // Update the dataset selection dropdown
+                  const option = document.createElement('option');
+                  option.value = data.filename;
+                  option.textContent = data.filename;
+                  datasetSelect.appendChild(option);
+                  datasetSelect.value = data.filename;
+                  datasetSelect.dispatchEvent(new Event('change'));
+
+                  // Show preprocessing summary if available
+                  if (data.preprocessing_summary) {
+                      showPreprocessingSummary(data.preprocessing_summary);
+                  }
+              }
+          } catch (error) {
+              // Handle any errors during the upload process
+              console.error('Error:', error);
+              updateUploadProgress(`$ Error: ${error.message}`, 0);
+              progressFill.style.backgroundColor = '#ff6b6b';
+          } finally {
+              // Reset button state
+              submitUpload.disabled = false;
+              submitUpload.classList.remove('loading');
+          }
+      });
+
+      function showMissingValuesModal(missingValues) {
+          const modal = document.createElement('div');
+          modal.className = 'missing-values-modal';
+          modal.innerHTML = `
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h3>Missing Values Detected</h3>
+                      <button class="close-btn">×</button>
+                  </div>
+                  <p>The following columns have missing values:</p>
+                  <div class="missing-values-list">
+                      ${Object.entries(missingValues).map(([column, info]) => `
+                          <div class="missing-value-item">
+                              <span>${column}: ${info.count} values (${info.percentage}%)</span>
+                              <select class="handling-strategy" data-column="${column}">
+                                  ${column.toLowerCase().includes('salary') || column.toLowerCase().includes('experience') ?
+                                      `<option value="mean">Replace with Mean</option>
+                                       <option value="median">Replace with Median</option>` :
+                                      `<option value="mode">Replace with Mode</option>`
+                              }
+                              <option value="drop">Drop Rows</option>
+                          </select>
+                          </div>
+                      `).join('')}
+                  </div>
+                  <div class="process-status" style="display: none;">
+                      <div class="status-text">Processing...</div>
+                      <div class="status-progress">
+                          <div class="progress-bar"></div>
+                      </div>
+                  </div>
+                  <button class="btn btn-custom" id="process-dataset-btn">
+                      Process Dataset
+                  </button>
+              </div>
+          `;
+          document.body.appendChild(modal);
+
+          // Add close button handler
+          const closeBtn = modal.querySelector('.close-btn');
+          closeBtn.addEventListener('click', () => modal.remove());
+
+          // Add event listener to the Process Dataset button
+          const processBtn = modal.querySelector('#process-dataset-btn');
+          const processStatus = modal.querySelector('.process-status');
+          const statusText = processStatus.querySelector('.status-text');
+          const progressBar = processStatus.querySelector('.progress-bar');
+
+          processBtn.addEventListener('click', async function() {
+              try {
+                  const strategies = {};
+                  modal.querySelectorAll('.handling-strategy').forEach(select => {
+                      strategies[select.dataset.column] = select.value;
+                  });
+
+                  // Show processing state
+                  processBtn.style.display = 'none';
+                  processStatus.style.display = 'block';
+                  
+                  // Update terminal status
+                  updateUploadProgress("$ Process: Handling missing values...", 65);
+                  await new Promise(r => setTimeout(r, 600));
+
+                  const response = await fetch('/api/handle_missing_values', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                          filename: currentFile,
+                          strategies: strategies
+                      })
+                  });
+
+                  if (!response.ok) {
+                      const error = await response.json();
+                      throw new Error(error.detail || 'Failed to process missing values');
+                  }
+
+                  updateUploadProgress("$ Transform: Applying data changes...", 75);
+                  await new Promise(r => setTimeout(r, 600));
+
+                  const data = await response.json();
+
+                  updateUploadProgress("$ Encode: Converting categories...", 85);
+                  await new Promise(r => setTimeout(r, 500));
+                  
+                  // Update dataset select with processed file
+                  const option = document.createElement('option');
+                  option.value = data.filename;
+                  option.textContent = data.filename;
+                  datasetSelect.appendChild(option);
+                  datasetSelect.value = data.filename;
+                  datasetSelect.dispatchEvent(new Event('change'));
+
+                  updateUploadProgress("$ Optimize: Finalizing structure...", 90);
+                  await new Promise(r => setTimeout(r, 500));
+
+                  // Show preprocessing summary
+                  showPreprocessingSummary(data.preprocessing_summary);
+
+                  updateUploadProgress("$ Complete: Dataset ready! ✨", 100);
+                  
+                  // Remove modal after a short delay
+                  setTimeout(() => modal.remove(), 1000);
+
+              } catch (error) {
+                  console.error('Error:', error);
+                  updateUploadProgress(`$ Error: ${error.message}`, 0);
+                  progressFill.style.backgroundColor = '#ff6b6b';
+                  processBtn.style.display = 'block';
+              }
+          });
+      }
+
+      function showPreprocessingSummary(summary) {
+        if (!summary) {
+            console.error('No preprocessing summary available');
+            return;
+        }
+
+        const summaryContainer = document.querySelector('.preprocessing-summary');
+        const summaryContent = summaryContainer.querySelector('.summary-content');
+        
+        // Create summary HTML with null checks
+        const summaryHTML = `
+            <div class="summary-section">
+                <h4>Removed Columns</h4>
+                <ul>
+                    ${(summary.unique_columns_removed || []).map(col => 
+                        `<li>${col}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+            <div class="summary-section">
+                <h4>Encoded Columns</h4>
+                <ul>
+                    ${(summary.encoded_columns || []).map(col => 
+                        `<li>${col}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        `;
+        
+        // Update content and show summary
+        summaryContent.innerHTML = summaryHTML;
+        summaryContainer.style.display = 'block';
+    }
+
+      // Remove file button handler
+      document.querySelector('.btn-remove').addEventListener('click', function() {
+          fileUpload.value = '';
+          fileInfo.style.display = 'none';
+          submitUpload.style.display = 'none';
+          uploadProgress.style.display = 'none';
+          progressFill.style.width = '0%';
+      });
+
+      // Update the upload progress animation
+      async function updateUploadProgress(text, progress) {
+          // Fade out current text
+          progressText.style.opacity = "0";
+          // Update progress bar
+          progressFill.style.width = `${progress}%`;
+          
+          // Wait for fade out animation
+          await new Promise(r => setTimeout(r, 100));
+          // Update and fade in new text
+          progressText.textContent = text;
+          progressText.style.opacity = "1";
+      }
+    });
+  </script>
+</body>
+</html>
